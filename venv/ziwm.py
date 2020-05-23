@@ -1,6 +1,8 @@
 import os
 import numpy as np
 from sklearn.feature_selection import SelectKBest, f_classif
+from sklearn import neighbors
+from sklearn.model_selection import train_test_split
 
 # wczytanie danych z jednego pliku
 def loadDataFromFile(filepath, diagnose_id):
@@ -86,7 +88,7 @@ def createSetForSelection():
     return finalX, finalY
 
 # wczytanie wszystkich plików, ale tylko n najlepszych cech
-def createSetForTests(sortedIndexedRank, numOfBestFeatures):
+def createSetWithKBestFeatures(sortedIndexedRank, numOfBestFeatures):
     finalX = []
     finalY = []
     featuresToRead = []
@@ -157,8 +159,15 @@ finalRank = labelAndSortScores(rank, "dane/features.txt")
 #     outputFile.write(str(record)+"\n")
 # outputFile.close()
 
-featuresToInclude = 1
-XforTest, YforTest = createSetForTests(finalRank, featuresToInclude)
+featuresToInclude = 3
+numOfNeighbours = 5
 
+X, Y = createSetWithKBestFeatures(finalRank, featuresToInclude)
+X_train, X_test, Y_train, Y_test = train_test_split(X, Y, test_size=0.2, random_state=112)
+
+clf = neighbors.KNeighborsClassifier(numOfNeighbours, weights='uniform')
+clf.fit(X_train, Y_train)
+
+print(clf.score(X_test, Y_test))
 
 
