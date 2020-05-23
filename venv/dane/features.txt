@@ -1,0 +1,59 @@
+Age
+Sex
+Pain location
+Chest pain radiation
+Pain character
+Onset of pain
+Number of hours since onset
+Duration of the last episode
+Nausea
+Diaphoresis
+Palpitations
+Dyspnea
+Dizziness/syncope
+Burping
+Palliative factors
+Prior chest pain of this type
+Physician consulted for prior pain
+Prior pain related to heart
+Prior pain due to MI
+Prior pain due to angina prectoris
+Prior MI
+Prior angina prectoris
+Prior atypical chest pain
+Congestive heart failure
+Peripheral vascular disease
+Hiatal hernia
+Hypertension
+Diabetes
+Smoker
+Diuretics
+Nitrates
+Beta blockers
+Digitalis
+Nonsteroidal anti-inflammatory
+Antacids/H2 blockers
+Systolic blood pressure
+Diastolic blood pressure
+Heart rate
+Respiration rate
+Rales
+Cyanosis
+Pallor
+Systolic murmur
+Diastolic murmur
+Oedema
+S3 gallop
+S4 gallop
+Chest wall tenderness
+Diaphoresis
+New Q wave
+Any Q wave
+New ST segment elevation
+Any ST segment elevation
+New ST segment depression
+Any ST segment depression
+New T wave inversion
+Any T wave inversion
+New intraventricular conduction defect
+Any intraventricular conduction defect
