@@ -203,7 +203,7 @@ numOfNeighbours = int(math.sqrt(len(fullY)*0.9))
 #featuresFromTo = [10, 45, 1]
 # test show optimal number is 32
 featuresToInclude = 32
-neighboursFromTo = [5,45,5]
+neighboursFromTo = [10,20,1]
 
 numberOfSteps = float((neighboursFromTo[1]-neighboursFromTo[0])/neighboursFromTo[2] + 1)
 
@@ -213,7 +213,7 @@ for numOfNeighbours in range(neighboursFromTo[0], neighboursFromTo[1]+1, neighbo
     
     sortedWeights = []
     for i in range(0, featuresToInclude):
-            sortedWeights.append(finalRank[i][2])
+        sortedWeights.append(finalRank[i][2])
 
     weightedMetric.SetWeights(sortedWeights)
 
@@ -223,7 +223,7 @@ for numOfNeighbours in range(neighboursFromTo[0], neighboursFromTo[1]+1, neighbo
     currentSteps = (numOfNeighbours-neighboursFromTo[0])/neighboursFromTo[2]
     
     for i in range(amountOfTests):
-        
+      
         X_train, X_test, Y_train, Y_test = train_test_split(X, Y, test_size=0.1)
 
         weightedCustomMetricClassif = neighbors.KNeighborsClassifier(n_neighbors=numOfNeighbours, algorithm='ball_tree', weights='distance', metric='pyfunc', metric_params={"func":weightedMetric.CalculateDistance})
