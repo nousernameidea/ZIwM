@@ -1,0 +1,9 @@
+Testing metrics for avaraged 2 random tests
+Unweighted eucledian metric;59;28;0.6098901098901099
+Weighted eucledian metric;59;28;0.6208791208791209
+Unweighted custom metric;59;28;0.5769230769230769
+Weighted custom metric;59;28;0.6153846153846154
+Unweighted eucledian metric + NCA;59;28;0.6648351648351648
+Weighted eucledian metric + NCA;59;28;0.6593406593406593
+Unweighted custom metric + NCA;59;28;0.6593406593406593
+Weighted custom metric + NCA;59;28;0.6648351648351648
