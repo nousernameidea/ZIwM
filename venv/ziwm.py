@@ -200,13 +200,14 @@ testOutputFile.close()
 numOfNeighbours = int(math.sqrt(len(fullY)*0.9))
 
 # start stop step
-featuresFromTo = [10, 45, 1]
-# for now number of neighbors is based on features
-# neighboursFromTo = [5,10,15]
+#featuresFromTo = [10, 45, 1]
+# test show optimal number is 32
+featuresToInclude = 32
+neighboursFromTo = [5,45,5]
 
-numberOfSteps = float((featuresFromTo[1]-featuresFromTo[0])/featuresFromTo[2] + 1)
+numberOfSteps = float((neighboursFromTo[1]-neighboursFromTo[0])/neighboursFromTo[2] + 1)
 
-for featuresToInclude in range(featuresFromTo[0], featuresFromTo[1]+1, featuresFromTo[2]):
+for numOfNeighbours in range(neighboursFromTo[0], neighboursFromTo[1]+1, neighboursFromTo[2]):
 
     X, Y = createSetWithKBestFeatures(finalRank, featuresToInclude)
     
@@ -219,7 +220,7 @@ for featuresToInclude in range(featuresFromTo[0], featuresFromTo[1]+1, featuresF
     # clearing score befora a new test iteration    
     metricClassifScore = 0
 
-    currentSteps = (featuresToInclude-featuresFromTo[0])/featuresFromTo[2]
+    currentSteps = (numOfNeighbours-neighboursFromTo[0])/neighboursFromTo[2]
     
     for i in range(amountOfTests):
         

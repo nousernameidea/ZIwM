@@ -1,2 +1,2 @@
-Testing Weighted custom metric + NCA for averaged 5 random tests
-1;28;0.4637362637362637
+Testing Weighted custom metric + NCA for averaged 2 random tests
+32;5;0.8131868131868132
