@@ -165,27 +165,13 @@ class WeightedEucledianMetric:
 
 # variables
 
-unweightedDefaultMetricClassifScore = 0
-weightedDefaultMetricClassifScore = 0
-unweightedCustomMetricClassifScore = 0
-weightedCustomMetricClassifScore = 0
-NCAUnweightedDefaultMetricClassifScore = 0
-NCAWeightedDefaultMetricClassifScore = 0
-NCAUnweightedCustomMetricClassifScore = 0
-NCAWeightedCustomMetricClassifScore = 0
+metricClassifScore = 0
 
 # format: separators ';' - classifier name; amount of features; amount of neighbours; avg classifier score
 
 def printPartialResultsToFile(numberOfTests, amountOfFeatures, amountOfNeighbours):
     testOutputFile = open("statisticTestResults.txt", "a")
-    testOutputFile.write("Unweighted eucledian metric;" + str(amountOfFeatures) + ";" + str(amountOfNeighbours) + ";" + str(unweightedDefaultMetricClassifScore/float(numberOfTests)) + "\n")
-    testOutputFile.write("Weighted eucledian metric;" + str(amountOfFeatures) + ";" + str(amountOfNeighbours) + ";" + str(weightedDefaultMetricClassifScore/float(numberOfTests)) + "\n")
-    testOutputFile.write("Unweighted custom metric;" + str(amountOfFeatures) + ";" + str(amountOfNeighbours) + ";" + str(unweightedCustomMetricClassifScore/float(numberOfTests)) + "\n")
-    testOutputFile.write("Weighted custom metric;" + str(amountOfFeatures) + ";" + str(amountOfNeighbours) + ";" + str(weightedCustomMetricClassifScore/float(numberOfTests)) + "\n")
-    testOutputFile.write("Unweighted eucledian metric + NCA;" + str(amountOfFeatures) + ";" + str(amountOfNeighbours) + ";" + str(NCAUnweightedDefaultMetricClassifScore/float(numberOfTests)) + "\n")
-    testOutputFile.write("Weighted eucledian metric + NCA;" + str(amountOfFeatures) + ";" + str(amountOfNeighbours) + ";" + str(NCAWeightedDefaultMetricClassifScore/float(numberOfTests)) + "\n")
-    testOutputFile.write("Unweighted custom metric + NCA;" + str(amountOfFeatures) + ";" + str(amountOfNeighbours) + ";" + str(NCAUnweightedCustomMetricClassifScore/float(numberOfTests)) + "\n")
-    testOutputFile.write("Weighted custom metric + NCA;" + str(amountOfFeatures) + ";" + str(amountOfNeighbours) + ";" + str(NCAWeightedCustomMetricClassifScore/float(numberOfTests)) + "\n")
+    testOutputFile.write(str(amountOfFeatures) + ";" + str(amountOfNeighbours) + ";" + str(metricClassifScore/float(numberOfTests)) + "\n")
     testOutputFile.close()
 
 # Program
@@ -208,16 +194,19 @@ nca = neighbors.NeighborhoodComponentsAnalysis()
 
 amountOfTests = 25
 testOutputFile = open("statisticTestResults.txt", "w")
-testOutputFile.write("Testing metrics for averaged " + str(amountOfTests) + " random tests\n")
+testOutputFile.write("Testing Weighted custom metric + NCA for averaged " + str(amountOfTests) + " random tests\n")
 testOutputFile.close()
 # square root from number of cases in the training set (90% of the whole data set)
 numOfNeighbours = int(math.sqrt(len(fullY)*0.9))
 
-featuresFromTo = [53, 45, 37, 30, 22, 15, 10]
+# start stop step
+featuresFromTo = [10, 45, 1]
 # for now number of neighbors is based on features
 # neighboursFromTo = [5,10,15]
 
-for featuresToInclude in featuresFromTo:
+numberOfSteps = float((featuresFromTo[1]-featuresFromTo[0])/featuresFromTo[2] + 1)
+
+for featuresToInclude in range(featuresFromTo[0], featuresFromTo[1]+1, featuresFromTo[2]):
 
     X, Y = createSetWithKBestFeatures(finalRank, featuresToInclude)
     
@@ -227,66 +216,23 @@ for featuresToInclude in featuresFromTo:
 
     weightedMetric.SetWeights(sortedWeights)
 
-    # clearing scores befora a new test iteration    
-    unweightedDefaultMetricClassifScore = 0
-    weightedDefaultMetricClassifScore = 0
-    unweightedCustomMetricClassifScore = 0
-    weightedCustomMetricClassifScore = 0
-    NCAUnweightedDefaultMetricClassifScore = 0
-    NCAWeightedDefaultMetricClassifScore = 0
-    NCAUnweightedCustomMetricClassifScore = 0
-    NCAWeightedCustomMetricClassifScore = 0
+    # clearing score befora a new test iteration    
+    metricClassifScore = 0
 
+    currentSteps = (featuresToInclude-featuresFromTo[0])/featuresFromTo[2]
+    
     for i in range(amountOfTests):
         
         X_train, X_test, Y_train, Y_test = train_test_split(X, Y, test_size=0.1)
 
-        unweightedDefaultMetricClassif = neighbors.KNeighborsClassifier(n_neighbors=numOfNeighbours, algorithm='ball_tree', weights='uniform')
-        unweightedDefaultMetricClassif.fit(X_train, Y_train)
-        unweightedDefaultMetricClassifScore += unweightedDefaultMetricClassif.score(X_test, Y_test)
-
-        print("Testing progress " + str(round((featuresFromTo.index(featuresToInclude)*amountOfTests+i+1.0/8.0)/float(amountOfTests*len(featuresFromTo))*100.0, 2)) + "%", end='\r')
-
-        weightedDefaultMetricClassif = neighbors.KNeighborsClassifier(n_neighbors=numOfNeighbours, algorithm='ball_tree', weights='distance')
-        weightedDefaultMetricClassif.fit(X_train, Y_train)
-        weightedDefaultMetricClassifScore += weightedDefaultMetricClassif.score(X_test, Y_test)
-
-        print("Testing progress " + str(round((featuresFromTo.index(featuresToInclude)*amountOfTests+i+2.0/8.0)/float(amountOfTests*len(featuresFromTo))*100.0, 2)) + "%", end='\r')
-
-        unweightedCustomMetricClassif = neighbors.KNeighborsClassifier(n_neighbors=numOfNeighbours, algorithm='ball_tree', weights='uniform', metric='pyfunc', metric_params={"func":weightedMetric.CalculateDistance})
-        unweightedCustomMetricClassif.fit(X_train, Y_train)
-        unweightedCustomMetricClassifScore += unweightedCustomMetricClassif.score(X_test, Y_test)
-
-        print("Testing progress " + str(round((featuresFromTo.index(featuresToInclude)*amountOfTests+i+3.0/8.0)/float(amountOfTests*len(featuresFromTo))*100.0, 2)) + "%", end='\r')
-
         weightedCustomMetricClassif = neighbors.KNeighborsClassifier(n_neighbors=numOfNeighbours, algorithm='ball_tree', weights='distance', metric='pyfunc', metric_params={"func":weightedMetric.CalculateDistance})
-        weightedCustomMetricClassif.fit(X_train, Y_train)
-        weightedCustomMetricClassifScore += weightedCustomMetricClassif.score(X_test, Y_test)
+        NCAWeightedCustomMetricClassifPipeline = Pipeline([('nca', nca), ('knn-weighted-custom', weightedCustomMetricClassif)])
+        NCAWeightedCustomMetricClassifPipeline.fit(X_train, Y_train)
+        metricClassifScore += NCAWeightedCustomMetricClassifPipeline.score(X_test, Y_test)
 
-        print("Testing progress " + str(round((featuresFromTo.index(featuresToInclude)*amountOfTests+i+4.0/8.0)/float(amountOfTests*len(featuresFromTo))*100.0, 2)) + "%", end='\r')
+        done = currentSteps*amountOfTests+i+1
+        total = float(amountOfTests)*numberOfSteps
 
-        NCAUnweightedDefaultMetricClassif = Pipeline([('nca', nca), ('knn-unweighted-default', unweightedDefaultMetricClassif)])
-        NCAUnweightedDefaultMetricClassif.fit(X_train, Y_train)
-        NCAUnweightedDefaultMetricClassifScore += NCAUnweightedDefaultMetricClassif.score(X_test, Y_test)
-
-        print("Testing progress " + str(round((featuresFromTo.index(featuresToInclude)*amountOfTests+i+5.0/8.0)/float(amountOfTests*len(featuresFromTo))*100.0, 2)) + "%", end='\r')
-
-        NCAWeightedDefaultMetricClassif = Pipeline([('nca', nca), ('knn-weighted-default', weightedDefaultMetricClassif)])
-        NCAWeightedDefaultMetricClassif.fit(X_train, Y_train)
-        NCAWeightedDefaultMetricClassifScore += NCAWeightedDefaultMetricClassif.score(X_test, Y_test)
-
-        print("Testing progress " + str(round((featuresFromTo.index(featuresToInclude)*amountOfTests+i+6.0/8.0)/float(amountOfTests*len(featuresFromTo))*100.0, 2)) + "%", end='\r')
-
-        NCAUnweightedCustomMetricClassif = Pipeline([('nca', nca), ('knn-unweighted-custom', unweightedCustomMetricClassif)])
-        NCAUnweightedCustomMetricClassif.fit(X_train, Y_train)
-        NCAUnweightedCustomMetricClassifScore += NCAUnweightedCustomMetricClassif.score(X_test, Y_test)
-
-        print("Testing progress " + str(round((featuresFromTo.index(featuresToInclude)*amountOfTests+i+7.0/8.0)/float(amountOfTests*len(featuresFromTo))*100.0, 2)) + "%", end='\r')
-
-        NCAWeightedCustomMetricClassif = Pipeline([('nca', nca), ('knn-weighted-custom', weightedCustomMetricClassif)])
-        NCAWeightedCustomMetricClassif.fit(X_train, Y_train)
-        NCAWeightedCustomMetricClassifScore += NCAWeightedCustomMetricClassif.score(X_test, Y_test)
-
-        print("Testing progress " + str(round((featuresFromTo.index(featuresToInclude)*amountOfTests+i+8.0/8.0)/float(amountOfTests*len(featuresFromTo))*100.0, 2)) + "%", end='\r')
+        print("Testing progress " + str(round(done/total*100, 2)) + "%", end='\r')
 
     printPartialResultsToFile(amountOfTests, featuresToInclude, numOfNeighbours)
